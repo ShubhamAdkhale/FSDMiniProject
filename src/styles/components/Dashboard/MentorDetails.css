@@ -1,0 +1,40 @@
+.landing-page {
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+.mentor-details {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.mentor-details h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.mentor-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.mentor-info p {
+  margin: 5px 0;
+  font-size: 16px;
+}
+
+.mentor-contact {
+  margin-top: 15px;
+}
+
+.mentor-contact a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.mentor-contact a:hover {
+  text-decoration: underline;
+}

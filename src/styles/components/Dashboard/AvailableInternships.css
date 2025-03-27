@@ -1,0 +1,44 @@
+.landing-page {
+  padding: 20px;
+}
+
+.internship-card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 15px;
+  margin: 10px 0;
+  transition: box-shadow 0.3s;
+}
+
+.internship-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.internship-title {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+}
+
+.internship-company {
+  font-weight: bold;
+}
+
+.internship-details {
+  margin-top: 10px;
+  font-size: 0.9em;
+  color: #555;
+}
+
+.apply-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.apply-button:hover {
+  background-color: #0056b3;
+}

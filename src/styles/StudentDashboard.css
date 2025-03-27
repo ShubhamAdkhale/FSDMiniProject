@@ -1,0 +1,88 @@
+/* General Styles */
+body {
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.student-dashboard {
+  text-align: center;
+}
+
+/* Hero Section */
+.dashboard-hero {
+  background: linear-gradient(to right, #6a11cb, #2575fc);
+  color: white;
+  padding: 50px 20px;
+}
+
+.dashboard-hero h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.dashboard-hero p {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+
+/* Dashboard Container */
+.dashboard-container {
+  display: flex;
+  padding: 20px;
+  height: 100vh;
+  background-color: #f8f9fa;
+  font-family: 'Roboto', sans-serif;
+}
+
+.dashboard-content {
+  display: flex;
+  flex: 1;
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Dashboard Sections */
+.dashboard-section {
+  padding: 50px 20px;
+  margin-top: 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.dashboard-section h2 {
+  margin-bottom: 15px;
+  color: #343a40;
+  font-size: 1.5rem;
+  text-align: left;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background-color: #343a40;
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  margin-right: 20px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+

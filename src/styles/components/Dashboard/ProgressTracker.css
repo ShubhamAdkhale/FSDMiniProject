@@ -1,0 +1,133 @@
+.landing-page {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+  }
+  
+  /* Container for the entire progress tracker */
+  .progress-tracker {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: 'Roboto', sans-serif;
+  }
+  
+  /* Section for overall progress */
+  .progress-section {
+    margin-bottom: 20px;
+  }
+  
+  .progress-section h3 {
+    margin-bottom: 10px;
+    color: #343a40;
+  }
+  
+  /* Progress bar container */
+  .progress-bar {
+    width: 100%;
+    background-color: #e9ecef;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  /* Progress bar fill */
+  .progress {
+    height: 20px;
+    background-color: #28a745;
+    color: white;
+    text-align: center;
+    line-height: 20px;
+    font-size: 12px;
+    border-radius: 10px;
+    transition: width 0.5s ease-in-out;
+    position: relative;
+  }
+  
+  .progress span {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-weight: bold;
+  }
+  
+  /* Section for SDG alignment */
+  .sdg-alignment {
+    margin-bottom: 20px;
+  }
+  
+  .sdg-alignment h3 {
+    margin-bottom: 10px;
+    color: #343a40;
+  }
+  
+  /* SDG bar container */
+  .sdg-bar {
+    margin-top: 10px;
+  }
+  
+  .sdg {
+    height: 20px;
+    background-color: #007bff;
+    color: white;
+    text-align: center;
+    line-height: 20px;
+    font-size: 12px;
+    border-radius: 10px;
+    margin-bottom: 5px;
+    position: relative;
+    transition: width 0.5s ease-in-out;
+  }
+  
+  .sdg span {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-weight: bold;
+  }
+  
+  /* Feedback section */
+  .feedback-section {
+    margin-top: 20px;
+  }
+  
+  .feedback-section h3 {
+    margin-bottom: 10px;
+    color: #343a40;
+  }
+  
+  .feedback-section p {
+    color: #6c757d;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .progress-title {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .progress-item {
+    margin: 10px 0;
+  }
+  
+  .progress-fill {
+    background-color: #76c7c0;
+    height: 100%;
+    transition: width 0.3s ease;
+  }
+  
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+    font-size: 14px;
+  }

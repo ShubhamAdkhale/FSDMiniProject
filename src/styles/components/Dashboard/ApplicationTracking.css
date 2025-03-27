@@ -1,0 +1,46 @@
+.landing-page {
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+.application-tracking-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.application-tracking-table th,
+.application-tracking-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+.application-tracking-table th {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.application-tracking-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.application-tracking-table tr:hover {
+  background-color: #ddd;
+}
+
+.application-status {
+  font-weight: bold;
+}
+
+.application-status.pending {
+  color: orange;
+}
+
+.application-status.approved {
+  color: green;
+}
+
+.application-status.rejected {
+  color: red;
+}

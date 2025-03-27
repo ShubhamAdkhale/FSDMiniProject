@@ -8,44 +8,39 @@ const LandingPage = () => {
   const [selectedDepartment, setSelectedDepartment] = useState('');
   const [filteredOpportunities, setFilteredOpportunities] = useState([]);
 
-  // Sample internship opportunities
   const opportunities = [
     {
       title: 'Software Development Intern',
       company: 'TechCorp',
       department: 'Engineering',
-      sdg: '9', // Industry, Innovation, and Infrastructure
+      sdg: '9', 
     },
     {
       title: 'Marketing Intern',
       company: 'MarketPro',
       department: 'Business',
-      sdg: '8', // Decent Work and Economic Growth
+      sdg: '8', 
     },
     {
       title: 'Graphic Design Intern',
       company: 'DesignStudio',
       department: 'Design',
-      sdg: '12', // Responsible Consumption and Production
+      sdg: '12', 
     },
   ];
 
-  // Handle search input change
   const handleSearchChange = (e) => {
     setSearchKeyword(e.target.value.toLowerCase());
   };
 
-  // Handle SDG filter change
   const handleSDGChange = (e) => {
     setSelectedSDG(e.target.value);
   };
 
-  // Handle Department filter change
   const handleDepartmentChange = (e) => {
     setSelectedDepartment(e.target.value.toLowerCase());
   };
 
-  // Handle Search Button Click
   const handleSearch = () => {
     const filtered = opportunities.filter((opportunity) => {
       const matchesKeyword =

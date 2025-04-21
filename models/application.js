@@ -22,8 +22,8 @@ const applicationSchema = new mongoose.Schema(
       default: "Pending",
     },
     progress: {
-      type: Number,
-      default: 0, // represents percentage (0 to 100)
+      type: mongoose.Schema.Types.ObjectId, // Changed from Number
+      ref: 'Progress'
     },
   },
   {

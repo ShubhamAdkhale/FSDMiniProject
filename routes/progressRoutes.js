@@ -1,50 +1,133 @@
 const express = require("express");
 const router = express.Router();
-const Application = require("../models/application"); // Your Application model
+const Progress = require("../models/progress");
+const Application = require("../models/application");
+const { verifyToken, verifyAdmin } = require("../middlewares/authMiddleware");
 
-// This will run periodically or can be called manually to update progress
-router.post("/:id/progress/update", async (req, res) => {
+// Initialize progress tracking
+router.post("/:applicationId", verifyAdmin, async (req, res) => {
     try {
-        const application = await Application.findById(req.params.id).populate('progress');
+        const { startDate, endDate, milestones } = req.body;
+        
+        if (!startDate || !endDate) {
+            return res.status(400).json({ message: "Missing required fields" });
+        }
+
+        const newProgress = new Progress({
+            startDate,
+            endDate,
+            milestones: (milestones || []).map(m => ({
+                title: m.title,
+                dueDate: m.dueDate,
+                completed: false
+            }))
+        });
+
+        await newProgress.save();
+
+        // Link to application
+const application = await Application.findByIdAndUpdate(
+    req.params.applicationId,
+    { progress: newProgress._id },
+    { new: true }
+);
+
+if (!application) {
+    return res.status(404).json({ message: "Application not found" });
+}
+
+// ✅ Link application → progress (No need to save progress twice)
+newProgress.application = application._id;
+// Save the progress only once here
+await newProgress.save();
+
+res.status(201).json({
+    message: "Progress tracking initialized",
+    progress: newProgress
+});
+
+    } catch (error) {
+        console.error("Error initializing progress:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+
+// Update progress details
+router.put("/:id", verifyAdmin, async (req, res) => {
+    try {
+        const progress = await Progress.findById(req.params.id)
+            .populate({
+                path: 'application',
+                populate: [
+                    { path: 'student', select: 'name email' },
+                    { path: 'internship', select: 'title' }
+                ]
+            });
+        if (!progress) {
+            return res.status(404).json({ message: "Progress not found" });
+        }
+
+        // Update fields
+        Object.assign(progress, req.body);
+        progress.lastUpdated = new Date();
+        progress.completion = progress.calculateCompletion();
+        
+        await progress.save();
+        
+        res.status(200).json(progress);
+    } catch (error) {
+        console.error("Error updating progress:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+
+
+// Get progress details by progress ID
+router.get("/:id", verifyToken, async (req, res) => {
+    try {
+        const progress = await Progress.findById(req.params.id)
+            .populate('application') // Populate the application field
+            .populate('application.student') // Populate student from application
+            .populate('application.internship'); // Populate internship from application
+
+        if (!progress) {
+            return res.status(404).json({ message: "Progress not found" });
+        }
+
+        // Check for student role (if applicable)
+        if (req.user.role === 'student' && !progress.application.student._id.equals(req.user.id)) {
+            return res.status(403).json({ message: "Access denied" });
+        }
+
+        res.status(200).json(progress);
+    } catch (error) {
+        console.error("Error fetching progress:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+
+// Get progress via application ID
+router.get("/application/:id", verifyToken, async (req, res) => {
+    try {
+        const application = await Application.findById(req.params.id)
+            .populate('progress')  // Populate the progress field from Application
+            .populate('student')   // Populate student field
+            .populate('internship');  // Populate internship field
+
         if (!application) {
             return res.status(404).json({ message: "Application not found" });
         }
 
-        // Ensure progress tracking is already initialized
-        let progress = application.progress;
-
-        // If progress does not exist, initialize it
-        if (!progress) {
-            return res.status(400).json({ message: "Progress not initialized for this application" });
+        if (!application.progress) {
+            return res.status(404).json({ message: "Progress not found for this application" });
         }
 
-        const currentDate = new Date();
-        const startDate = new Date(progress.startDate);
-        const endDate = new Date(progress.endDate);
-
-        // Check if the internship has started but not finished
-        if (currentDate >= startDate && currentDate <= endDate) {
-            // Increment the daysSpent field by 1
-            const daysWorked = Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
-            progress.daysSpent = daysWorked;
-
-            // Update the progress entry
-            progress.lastUpdated = currentDate;
-
-            // Save the updated application with progress
-            await progress.save(); // Save progress document
-
-            res.status(200).json({
-                message: "Progress updated successfully",
-                progress: progress,
-            });
-        } else {
-            res.status(400).json({ message: "Internship not in progress or already completed" });
-        }
+        res.status(200).json(application.progress); // Return the progress directly
     } catch (error) {
-        console.error("❌ Error updating progress:", error);
-        res.status(500).json({ message: "Internal Server Error", error });
+        console.error("Error fetching progress:", error);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
+
 
 module.exports = router;

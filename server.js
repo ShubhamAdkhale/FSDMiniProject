@@ -15,7 +15,7 @@ app.use(cors()); // Enable CORS
 
 // ✅ Connect to MongoDB
 mongoose
-  .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB Connected"))
   .catch((err) => console.error("❌ MongoDB Connection Error:", err));
 
@@ -41,6 +41,7 @@ const poRoutes = require("./routes/poRoutes");
 const peoRoutes = require("./routes/peoRoutes");
 const adminRoutes = require("./routes/adminRoutes"); // Import Admin Routes
 const userRoutes = require("./routes/userRoutes");
+const progressRoutes = require("./routes/progressRoutes");
 
 // ✅ Use Routes
 app.use("/api/auth", authRoutes); // Authentication Routes
@@ -51,42 +52,50 @@ app.use("/api/po", poRoutes);
 app.use("/api/peo", peoRoutes);
 app.use("/api/admin", adminRoutes); // Base route for Admin APIs
 app.use("/api/users", userRoutes);
-
-// Schedule the task to run every day at 12:00 AM
+app.use("/api/progress", progressRoutes);
+app.use(require('./middlewares/errorHandler'));
+// Schedule daily progress updates
 cron.schedule("0 0 * * *", async () => {
   try {
-      // Find all applications that are in progress
-      const applications = await Application.find({ "progress.startDate": { $lte: new Date() }, "progress.endDate": { $gte: new Date() } }).populate('progress');
+      const currentDate = new Date();
+      const progresses = await Progress.find({
+          startDate: { $lte: currentDate },
+          endDate: { $gte: currentDate }
+      });
 
-      // Loop through each application and update its progress
-      for (const application of applications) {
-          let progress = application.progress; // Assuming only one progress entry
-          if (!progress) {
-              continue; // Skip applications without progress data
+      const bulkOps = progresses.map(progress => {
+          const update = {
+              daysSpent: Math.floor((currentDate - progress.startDate) / 86400000) + 1,
+              lastUpdated: currentDate
+          };
+
+          // Auto-complete overdue milestones
+          if (progress.milestones?.length > 0) {
+              update.milestones = progress.milestones.map(m => ({
+                  ...m.toObject(),
+                  completed: m.completed || new Date() > m.dueDate
+              }));
+              update.completion = progress.milestones.filter(m => m.completed).length / progress.milestones.length * 100;
+          } else {
+              update.completion = update.daysSpent / Math.ceil((progress.endDate - progress.startDate) / 86400000) * 100;
           }
-          
-          const currentDate = new Date();
-          const startDate = new Date(progress.startDate);
-          const endDate = new Date(progress.endDate);
 
-          // Only update if it's within the internship duration
-          if (currentDate >= startDate && currentDate <= endDate) {
-              // Calculate the number of days worked
-              const daysWorked = Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+          return {
+              updateOne: {
+                  filter: { _id: progress._id },
+                  update: { $set: update }
+              }
+          };
+      });
 
-              // Update daysSpent
-              progress.daysSpent = daysWorked;
-              progress.lastUpdated = currentDate;
-
-              await progress.save(); // Save the progress document
-          }
+      if (bulkOps.length > 0) {
+          await Progress.bulkWrite(bulkOps);
+          console.log(`Updated ${bulkOps.length} progress entries`);
       }
-      console.log("Daily progress update completed!");
   } catch (error) {
-      console.error("❌ Error in cron job:", error);
+      console.error("Cron job failed:", error);
   }
 });
-
 
 // ✅ Start Server
 const PORT = process.env.PORT || 5000;
